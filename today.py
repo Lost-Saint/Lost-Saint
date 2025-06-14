@@ -443,7 +443,7 @@ if __name__ == '__main__':
     """
     print('Calculation times:')
     # define global variable for owner ID and calculate user's creation date
-    # e.g {'id': 'MDQ6VXNlcjU3MzMxMTM0'} and 2019-11-03T21:15:07Z for username 'Lost-Saint'
+    # e.g {'id': 'MDQ6VXNlcjg1NTgxMjA5'} and 2019-11-03T21:15:07Z for username 'Lost-Saint'
     user_data, user_time = perf_counter(user_getter, USER_NAME)
     OWNER_ID, acc_date = user_data
     formatter('account data', user_time)
@@ -458,7 +458,7 @@ if __name__ == '__main__':
     follower_data, follower_time = perf_counter(follower_getter, USER_NAME)
 
     # several repositories that I've contributed to have since been deleted.
-    if OWNER_ID == {'id': 'MDQ6VXNlcjU3MzMxMTM0'}: # only calculate for user Lost-Saint
+    if OWNER_ID == {'id': 'MDQ6VXNlcjg1NTgxMjA5'}: # only calculate for user Lost-Saint
         archived_data = add_archive()
         for index in range(len(total_loc)-1):
             total_loc[index] += archived_data[index]
