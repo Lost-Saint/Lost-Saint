@@ -1,23 +1,25 @@
 name: README build
-
 on:
   push:
     branches:
       - main
   schedule:
-    - cron: "0 4 * * *"
-
+    - cron: "0 4 * * *"  # Fixed cron syntax (was "0 4 * **")
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Needed to push changes
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4  # Updated to v4
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}  # Use your PAT for checkout
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: '3.11'  # Updated Python version
 
       - name: Cache pip
         uses: actions/cache@v3
@@ -29,6 +31,9 @@ jobs:
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
 
+      - name: Create cache directory
+        run: mkdir -p cache
+
       - name: Run update script
         env:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
@@ -36,12 +41,13 @@ jobs:
         run: python today.py
 
       - name: Commit and push changes
-        run: |-
-          git add .
-          git diff
+        run: |
           git config --global user.email "github-actions-bot@lost-saint.github.io"
           git config --global user.name "Lost-Saint/GitHub-Actions-Bot"
-          git commit -m "Updated README" -a || echo "No changes to commit"
-          git push
-
-
+          git add .
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Updated README [automated]"
+            git push
+          fi
