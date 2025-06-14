@@ -284,16 +284,22 @@ def add_archive():
     with open('cache/repository_archive.txt', 'r') as f:
         data = f.readlines()
     old_data = data
-    data = data[7:len(data)-3] # remove the comment block
+    data = data[7:len(data)-3]  # remove the comment block
     added_loc, deleted_loc, added_commits = 0, 0, 0
     contributed_repos = len(data)
     for line in data:
         repo_hash, total_commits, my_commits, *loc = line.split()
         added_loc += int(loc[0])
         deleted_loc += int(loc[1])
-        if (my_commits.isdigit()): added_commits += int(my_commits)
-    added_commits += int(old_data[-1].split()[4][:-1])
+        if my_commits.isdigit():
+            added_commits += int(my_commits)
+
+    # Fix: only try to access index 4 if it exists
+    if old_data and len(old_data[-1].split()) > 4:
+        added_commits += int(old_data[-1].split()[4][:-1])
+
     return [added_loc, deleted_loc, added_loc - deleted_loc, added_commits, contributed_repos]
+
 
 def force_close_file(data, cache_comment):
     """
